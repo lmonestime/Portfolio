@@ -1,0 +1,86 @@
+--Importing covid death data--
+SELECT *
+FROM `first-project-376102.covid.deaths`
+ORDER BY 3,4
+
+--Importing covid vaccination data--
+SELECT *
+FROM `first-project-376102.covid.covidvac`
+ORDER By 3,4
+
+--Organize data that will be used ordered by location and date--
+SELECT
+  location, date, total_cases, new_cases, total_deaths, population
+FROM `first-project-376102.covid.deaths`
+ORDER BY 1,2
+
+--Top Ten Highest ICU Admissions v Population--
+SELECT
+  location, population, MAX(CAST(weekly_icu_admissions AS BIGNUMERIC)) AS icu_max, MAX(CAST(weekly_icu_admissions AS BIGNUMERIC))/population*100 AS icu_population
+FROM `first-project-376102.covid.deaths`
+WHERE location is not NULL
+GROUP BY 1,2
+ORDER BY icu_population DESC
+LIMIT 10
+
+--Total Deaths v Total Cases in United States--
+SELECT
+  location, date, total_cases, total_deaths, total_deaths/total_cases*100 AS death_percentage
+FROM `first-project-376102.covid.deaths`
+WHERE location LIKE '%States%'
+ORDER BY 1,2
+
+--Total Cases v Population--
+SELECT
+  location, date, total_cases, population, total_cases/population*100 AS cases_to_pop
+FROM `first-project-376102.covid.deaths`
+WHERE location LIKE '%States%'
+ORDER BY 1,2
+
+--Highest Infection Count v Population in US--
+SELECT
+  location, MAX(total_cases) AS highest_infection, population, MAX((total_cases/population*100)) AS cases_to_population
+FROM `first-project-376102.covid.deaths`
+WHERE location LIKE '%States%'
+GROUP BY population, location
+
+--Highest Death Count per Country--
+SELECT
+  location, MAX(total_deaths) AS highest_death
+FROM `first-project-376102.covid.deaths`
+WHERE continent is not NULL
+GROUP BY location
+ORDER BY highest_death DESC
+
+--Total Deaths by Continent--
+SELECT
+  location, SUM(new_deaths) AS death_toll
+FROM `first-project-376102.covid.deaths`
+WHERE continent is NULL
+GROUP BY location
+ORDER BY death_toll DESC
+
+--Total Vaccinations v Population--
+SELECT dea.date, dea.continent, dea.location, dea.population, vac.new_vaccinations
+FROM `first-project-376102.covid.covidvac` AS vac
+JOIN `first-project-376102.covid.deaths` AS dea ON
+dea.location = vac.location AND
+dea.date = vac.date
+WHERE dea.continent is not NULL
+ORDER BY 1,2
+
+--Average Tests per Case in United States--
+SELECT location, date, AVG(tests_per_case) AS tpc
+FROM `first-project-376102.covid.covidvac`
+WHERE location = 'United States'
+GROUP BY 1,2
+ORDER BY tpc DESC
+
+--Percentage that have received vaccines--
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, SUM(CAST(vac.new_vaccinations AS int64)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
+FROM `first-project-376102.covid.covidvac` AS vac
+JOIN `first-project-376102.covid.deaths` AS dea ON
+dea.location = vac.location AND
+dea.date = vac.date
+WHERE dea.continent is not NULL
+ORDER BY 1,2
