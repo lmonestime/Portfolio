@@ -1,0 +1,46 @@
+--Link to accompanying Tableau visualization--
+https://public.tableau.com/views/StudentMentalHealthDemographics/Dashboard1?:language=en-US&:display_count=n&:origin=viz_share_link
+
+--Preview Data--
+SELECT * FROM `first-project-376102.health.smh`
+
+--Reported Depression by Gender--
+SELECT
+  Gender, COUNT(Depression) AS gender_depression
+FROM `first-project-376102.health.smh`
+GROUP BY Gender
+
+--Reported Anxiety by Gender--
+SELECT
+  Gender, COUNT(Anxiety) AS gender_anxiety
+FROM `first-project-376102.health.smh`
+GROUP BY Gender
+
+--Treatment v Gender--
+SELECT 
+  Gender, COUNT(Specialist) AS therapy_count
+FROM `first-project-376102.health.smh`
+GROUP BY Gender
+
+--Depression Count v Marital Status--
+SELECT 
+  COUNT(Depression) AS depression_count, Marital_status
+FROM `first-project-376102.health.smh`
+GROUP BY Marital_status
+
+--Depression Count v GPA--
+SELECT
+  COUNT(Depression) AS depression_count, Gender, cGPA
+FROM `first-project-376102.health.smh`
+GROUP BY Gender, cGPA
+
+--Year Distribution of Students--
+SELECT
+  Year, COUNT(Year) AS year_distribution
+FROM `first-project-376102.health.smh`
+GROUP BY Year
+
+--Percentage of depressed that received counseling--
+SELECT
+  SUM(specialist)/Sum(depression)*100 AS dep_counseling
+FROM `first-project-376102.health.smh`
