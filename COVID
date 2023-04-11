@@ -85,3 +85,4 @@ dea.date = vac.date
 WHERE dea.continent is not NULL
 ORDER BY 1,2
 
+
