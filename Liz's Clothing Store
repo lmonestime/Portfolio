@@ -1,0 +1,45 @@
+--Table for customer info-
+CREATE TABLE first-project-376102.lizzystore.customers (
+    customer_id INT64,
+    first_name STRING(50),
+    last_name STRING(50),
+    email STRING(100),
+    phone_number STRING(20),
+    address STRING(200)
+);
+
+--Sample data entry of new customer--
+INSERT INTO customers (customer_id, first_name, last_name, email, phone_number, address)
+VALUES (1, 'Liz', 'Doe', 'lizdoe@email.com', '321-654-0987', '123 Easy Ave');
+
+--Product table detailing product name, id, etc--
+CREATE TABLE first-project-376102.lizzystore.products (
+    product_id INT64,
+    product_name STRING(50),
+    price NUMERIC(10, 2),
+    color STRING(50),
+    description STRING(500)
+);
+
+--Sample product inserted into table--
+INSERT INTO products (product_id, product_name, price, color, description)
+VALUES (1, 'Shirt', 35.00, 'red', 'A casual, short-sleeved tee');
+
+--Table for orders placed--
+CREATE TABLE first-project-376102.lizzystore.orders (
+    order_id INT64,
+    customer_id INT64,
+    order_date DATE,
+    order_total NUMERIC(10, 2),
+    CONSTRAINT fk_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+--Inserted sample order--
+INSERT INTO orders (order_id, customer_id, order_date, order_total)
+VALUES (1, 1, '2023-04-13', 57.96);
+
+--Retrieve orders along with associated customer information--
+SELECT orders.order_id, customers.first_name, customers.last_name, orders.order_date, orders.order_total
+FROM orders
+INNER JOIN customers ON orders.customer_id = customers.customer_id
