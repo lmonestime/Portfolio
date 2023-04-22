@@ -44,3 +44,4 @@ GROUP BY Year
 SELECT
   SUM(specialist)/Sum(depression)*100 AS dep_counseling
 FROM `first-project-376102.health.smh`
+
